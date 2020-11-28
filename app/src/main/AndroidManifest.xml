@@ -9,7 +9,18 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Recipe2U">
-        <activity android:name=".recipe2UCreateIngredient" android:parentActivityName=".recipe2UCreateRecipe"></activity>
+        <activity android:name=".recipe2UViewRecipe"></activity>
+        <activity
+            android:name=".recipe2UFilterRecipe"
+            android:parentActivityName=".recipe2USearch2" />
+        <activity
+            android:name=".recipe2USearch2"
+            android:label="Buscar Recetas"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/Theme.Recipe2U.NoActionBar" />
+        <activity
+            android:name=".recipe2UCreateIngredient"
+            android:parentActivityName=".recipe2UCreateRecipe" />
         <activity
             android:name=".recipe2UCreateRecipe"
             android:parentActivityName=".MainActivity" />

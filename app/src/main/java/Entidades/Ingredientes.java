@@ -1,38 +1,22 @@
 package Entidades;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.ForeignKey;
+import androidx.room.PrimaryKey;
 
+@Entity(foreignKeys = @ForeignKey(entity = Categorias.class,
+        parentColumns = "categoriaId",
+        childColumns = "categoria",
+        onDelete = 1))
 public class Ingredientes {
 
-    private int id;
-    private String nombre;
-    private Categorias categorias;
+    @PrimaryKey(autoGenerate = true)
+    public int ingredienteId;
 
-    public Ingredientes(String nombre, Categorias categorias, int id) {
-        this.nombre = nombre;
-        this.categorias = categorias;
-        this.id =id;
-    }
+    @ColumnInfo(name = "nombre")
+    public String nombre;
 
-    public int getId() {
-        return id;
-    }
+    @ColumnInfo(name = "categoria")
+    public int categoria;
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public Categorias getCategorias() {
-        return categorias;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public void setCategorias(Categorias categorias) {
-        this.categorias = categorias;
-    }
 }

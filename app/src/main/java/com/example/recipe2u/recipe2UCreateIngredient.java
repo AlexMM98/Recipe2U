@@ -1,17 +1,29 @@
 package com.example.recipe2u;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
+import android.widget.Toast;
 
-public class recipe2UCreateIngredient extends AppCompatActivity {
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.room.Room;
+
+import java.util.List;
+
+import Entidades.Categorias;
+import Entidades.CategoriasDAO;
+import Entidades.DatabaseApp;
+import Entidades.Ingredientes;
+import Entidades.IngredientesDAO;
+import Entidades.SingletonMap;
+
+public class recipe2UCreateIngredient extends AppCompatActivity{
+    private static final String DB_NAME = "dbEmpotrados";
+    public static DatabaseApp db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,24 +34,53 @@ public class recipe2UCreateIngredient extends AppCompatActivity {
         Spinner spnCategorias = (Spinner) findViewById(R.id.SpnCategorias);
         Button btnAceptarIng = (Button) findViewById((R.id.BAceptarIng));
 
-        AdminSQLiteOpenHelper con = new AdminSQLiteOpenHelper(this, "bd_categorias", null, 1);
-        SQLiteDatabase db = con.getWritableDatabase();
-
         String[] queryCols = {"idCategoria", "nombre"};
         String[] fromColumns = { "nombre" };
         int[] toViews = { android.R.id.text1 };
 
-        Cursor cursor = db.query(true,"Categorias", queryCols,null,null,null,null,null,null);
-        SimpleCursorAdapter adapter = new SimpleCursorAdapter(this,
-                android.R.layout.simple_spinner_item,
-                cursor,
-                fromColumns,
-                toViews,
-                0);
-        spnCategorias.setAdapter(adapter);
+        db = (DatabaseApp) SingletonMap.getInstance().get(DB_NAME);
+        if (db == null){
+            db = Room.databaseBuilder(
+                    getApplicationContext(),
+                    DatabaseApp.class,
+                    DB_NAME).allowMainThreadQueries().build();
 
-        //String[] lenguajes = {"Seleccione","Ruby","Java",".NET","Python","PHP","JavaScript","GO"};
-        //spnCategorias.setAdapter(new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_spinner_dropdown_item,lenguajes));
+            SingletonMap.getInstance().put(DB_NAME, db);
+        }
+
+        CategoriasDAO dao = db.getCategoriasDAO();
+
+        List<Categorias> listaCat = dao.getAll();
+        String[] cats = new String[listaCat.size()];
+        int i =0;
+
+        for(Categorias c :listaCat){
+            cats[i]= c.nombre;
+            i++;
+        }
+
+        spnCategorias.setAdapter(new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_spinner_dropdown_item,cats));
+
+        btnAceptarIng.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent (v.getContext(), recipe2UCreateRecipe.class);
+
+                String seleccion = spnCategorias.getSelectedItem().toString();
+                Categorias sel = (Categorias) dao.findByName(seleccion).get(0);
+                String txt = String.valueOf(tNombreIngrediente.getText());
+
+                Ingredientes nuevo = new Ingredientes();
+                nuevo.categoria=sel.categoriaId;
+                nuevo.nombre=txt;
+                IngredientesDAO daoI = db.getIngredientesDAO();
+                daoI.insertAll(nuevo);
+
+                String msg = ("Ingrediente creado correctamente");
+                Toast.makeText(getApplicationContext(), msg , Toast.LENGTH_SHORT).show();
+                startActivityForResult(intent, 0);
+            }
+        });
     }
 
 }

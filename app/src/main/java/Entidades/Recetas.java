@@ -1,50 +1,25 @@
 package Entidades;
 
-import java.util.List;
+import android.graphics.Bitmap;
 
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+
+@Entity
 public class Recetas {
 
-    private int id;
-    private String nombre;
-    private String descripcion;
-    private List<Ingredientes> ingredientes;
+    @PrimaryKey(autoGenerate = true)
+    public int recetaId;
 
-    public Recetas(int id, String nombre, String descripcion, List<Ingredientes> ingredientes) {
-        this.id = id;
-        this.nombre = nombre;
-        this.descripcion = descripcion;
-        this.ingredientes = ingredientes;
-    }
+    @ColumnInfo(name = "nombre")
+    public String nombre;
 
-    public int getId() {
-        return id;
-    }
+    @ColumnInfo(name = "descripcion")
+    public String descripcion;
 
-    public void setId(int id) {
-        this.id = id;
-    }
+    @Ignore
+    public Bitmap picture;
 
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public List<Ingredientes> getIngredientes() {
-        return ingredientes;
-    }
-
-    public void setIngredientes(List<Ingredientes> ingredientes) {
-        this.ingredientes = ingredientes;
-    }
-
-    public String getDescripcion() {
-        return descripcion;
-    }
-
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
 }
